@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>333 기도운동 캠페인</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 {
+            color: #333;
+            text-align: center;
+        }
+        #login-form, #prayer-content {
+            margin-bottom: 20px;
+        }
+        #prayer-topic {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        form {
+            margin-top: 20px;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        #calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-top: 20px;
+        }
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .calendar-day.checked {
+            background-color: #28a745;
+            color: white;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            #stats {
+                flex-direction: column;
+            }
+            .stat-item {
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>333 기도운동 캠페인</h1>
+        <div id="login-form">
+            <input type="text" id="username" placeholder="사용자 이름">
+            <button onclick="login()">로그인</button>
+        </div>
+        <div id="prayer-content" style="display:none;">
+            <div id="prayer-topic">
+                <h2>오늘의 기도 제목</h2>
+                <p id="today-prayer"></p>
+            </div>
+            <form id="prayer-form">
+                <h3>오늘의 기도 체크인</h3>
+                <select id="prayer-times">
+                    <option value="1">1회</option>
+                    <option value="2">2회</option>
+                    <option value="3">3회</option>
+                </select>
+                <button type="submit">기도 완료</button>
+            </form>
+            <div id="stats">
+                <div class="stat-item">
+                    <h4>전체 참여자</h4>
+                    <p id="total-participants">0명</p>
+                </div>
+                <div class="stat-item">
+                    <h4>오늘의 참여자</h4>
+                    <p id="today-participants">0명</p>
+                </div>
+                <div class="stat-item">
+                    <h4>나의 연속 일수</h4>
+                    <p id="my-streak">0일</p>
+                </div>
+            </div>
+            <h3>나의 30일 캘린더</h3>
+            <div id="calendar"></div>
+        </div>
+    </div>
+
+    <script>
+        const prayerTopics = [
+            "하나님의 사랑과 은혜가 우리 교회와 지역 사회에 충만하기를",
+            "우리 교회가 복음 전파에 더욱 힘쓰며 선교 사역이 확장되기를",
+            "교회 지도자들에게 지혜와 분별력을 주시고 성령의 인도하심을 받기를",
+            "우리 교회 성도들의 신앙이 더욱 성숙해지고 믿음이 굳건해지기를",
+            "우리 지역 사회의 어려운 이웃들에게 하나님의 사랑이 전해지기를",
+            "우리나라의 지도자들이 하나님을 경외하며 올바른 결정을 내리기를",
+            "전 세계의 평화와 기독교 박해 지역의 신자들을 위해"
+        ];
+
+        let currentUser = '';
+        let myStreak = 0;
+        let totalParticipants = 523; // 실제로는 서버에서 관리될 숫자
+        let todayParticipants = 0;
+        let calendar = new Array(30).fill(false);
+
+        function login() {
+            currentUser = document.getElementById('username').value;
+            if (currentUser) {
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('prayer-content').style.display = 'block';
+                loadTodayPrayer();
+                updateStats();
+                renderCalendar();
+            }
+        }
+
+        function loadTodayPrayer() {
+            const today = new Date().getDay();
+            document.getElementById('today-prayer').textContent = prayerTopics[today];
+        }
+
+        function updateStats() {
+            todayParticipants = Math.floor(Math.random() * 100 + 400); // 실제로는 서버에서 계산될 숫자
+            document.getElementById('total-participants').textContent = totalParticipants + '명';
+            document.getElementById('today-participants').textContent = todayParticipants + '명';
+            document.getElementById('my-streak').textContent = myStreak + '일';
+        }
+
+        function renderCalendar() {
+            const calendarElement = document.getElementById('calendar');
+            calendarElement.innerHTML = '';
+            for (let i = 0; i < 30; i++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day' + (calendar[i] ? ' checked' : '');
+                dayElement.textContent = i + 1;
+                calendarElement.appendChild(dayElement);
+            }
+        }
+
+        document.getElementById('prayer-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const prayerTimes = document.getElementById('prayer-times').value;
+            // 실제로는 서버에 데이터를 보내고 응답을 받아야 함
+            myStreak++;
+            calendar[myStreak - 1] = true;
+            updateStats();
+            renderCalendar();
+            alert(`오늘 ${prayerTimes}회 기도를 완료하셨습니다. 현재 ${myStreak}일째 연속 참여 중입니다!`);
+        });
+
+        // 페이지 로드 시 오늘의 기도 제목 설정
+        loadTodayPrayer();
+    </script>
+</body>
+</html>
